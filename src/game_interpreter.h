@@ -155,6 +155,11 @@ protected:
 
 	bool CommandEnd();
 
+	// PATCH
+  bool CheckContinue();
+  void CommandLoadGame();
+  void CommandShutdown();
+
 	virtual bool DefaultContinuation(RPG::EventCommand const& com);
 	virtual bool ContinuationChoices(RPG::EventCommand const& com);
 	virtual bool ContinuationOpenShop(RPG::EventCommand const& com);

@@ -44,6 +44,8 @@
 #include "sdl_audio.h"
 #include "al_audio.h"
 
+#include "game_system.h"
+
 #include <cstdlib>
 #include <cstring>
 
@@ -877,11 +879,40 @@ void SdlUi::ProcessFingerEvent(SDL_Event& evnt, bool finger_down) {
 	jmethodID method_getPixels = env->GetMethodID(cls, "getPixels", "(D)I");
 	float button_size = env->CallIntMethod(sdl_activity, method_getPixels, 60.0);
 	float cross_size = env->CallIntMethod(sdl_activity, method_getPixels, 150.0);
+
+	jmethodID method_setNumpad = env->GetMethodID(cls, "setNumpad", "(Z)I");
+	env->CallIntMethod(sdl_activity, method_setNumpad, Game_System::UseNumpad);
+
 	env->DeleteLocalRef(cls);
 	env->DeleteLocalRef(sdl_activity);
 
 	float x = evnt.tfinger.x;
 	float y = evnt.tfinger.y;
+
+	// Numpad
+	if (Game_System::UseNumpad)
+	{
+		int regionX = x * 3;
+		int regionY = y * 3;
+		int regionVal = regionX + 1 + regionY * 3;
+		Output::Debug("RegionX %d, regionY %d, regionVal %d", regionX, regionY, regionVal);
+		keys[Input::Keys::KP0 + regionVal] = finger_down;
+		// switch(regionVal)
+		// {
+		// 	case 1: keys[Input::Keys::KP1] = finger_down; break;
+		// 	case 2: keys[Input::Keys::KP2] = finger_down; break;
+		// 	case 3: keys[Input::Keys::KP3] = finger_down; break;
+		// 	case 4: keys[Input::Keys::KP4] = finger_down; break;
+		// 	case 5: keys[Input::Keys::KP5] = finger_down; break;
+		// 	case 6: keys[Input::Keys::KP6] = finger_down; break;
+		// 	case 7: keys[Input::Keys::KP7] = finger_down; break;
+		// 	case 8: keys[Input::Keys::KP8] = finger_down; break;
+		// 	case 9: keys[Input::Keys::KP9] = finger_down; break;
+		// 	default: break;
+		// }
+		// KP0, KP1, KP2, KP3, KP4, KP5, KP6, KP7, KP8, KP9
+		return;
+	}
 
 	// Bounding box of button a
 	float a_x2 = 1 - 0.13;
@@ -895,6 +926,12 @@ void SdlUi::ProcessFingerEvent(SDL_Event& evnt, bool finger_down) {
 	float b_x = b_x2 - button_size / screen_width;
 	float b_y2 = b_y + button_size / screen_height;
 
+	// Bounding box of button b
+	float d_x2 = 1 - 0.03;
+	float d_y = 0.8;
+	float d_x = b_x2 - button_size / screen_width;
+	float d_y2 = b_y + button_size / screen_height;
+
 	// Bunding box of the cross
 	// One direction has 1/3 of box size
 	float cross_x = 0.03;
@@ -906,6 +943,7 @@ void SdlUi::ProcessFingerEvent(SDL_Event& evnt, bool finger_down) {
 	
 	bool a_hit = (x >= a_x && x <= a_x2 && y >= a_y && y <= a_y2);
 	bool b_hit = (x >= b_x && x <= b_x2 && y >= b_y && y <= b_y2);
+	bool d_hit = (x >= d_x && x <= d_x2 && y >= d_y && y <= d_y2);
 	bool up_hit = (x >= cross_x + cross_dir_width && x <= cross_x + cross_dir_width*2 && y >= cross_y && y <= cross_y + cross_dir_width_y);
 	bool down_hit = (x >= cross_x + cross_dir_width && x <= cross_x + cross_dir_width*2 && y >= cross_y + cross_dir_width_y*2 && y <= cross_y + cross_dir_width_y*3);
 	bool left_hit = (x >= cross_x && x <= cross_x + cross_dir_width && y >= cross_y + cross_dir_width_y && y <= cross_y + cross_dir_width_y*2);
@@ -914,6 +952,7 @@ void SdlUi::ProcessFingerEvent(SDL_Event& evnt, bool finger_down) {
 	if (finger_down) {
 		keys[Input::Keys::RETURN] = a_hit;
 		keys[Input::Keys::ESCAPE] = b_hit;
+		keys[Input::Keys::SHIFT] = d_hit;
 		keys[Input::Keys::UP] = up_hit;
 		keys[Input::Keys::DOWN] = down_hit;
 		keys[Input::Keys::LEFT] = left_hit;
@@ -921,6 +960,7 @@ void SdlUi::ProcessFingerEvent(SDL_Event& evnt, bool finger_down) {
 	} else {
 		keys[Input::Keys::RETURN] = !a_hit & keys[Input::Keys::RETURN];
 		keys[Input::Keys::ESCAPE] = !b_hit & keys[Input::Keys::ESCAPE];
+		keys[Input::Keys::SHIFT] = !d_hit & keys[Input::Keys::SHIFT];
 		keys[Input::Keys::UP] = !up_hit & keys[Input::Keys::UP];
 		keys[Input::Keys::DOWN] = !down_hit & keys[Input::Keys::DOWN];
 		keys[Input::Keys::LEFT] = !left_hit & keys[Input::Keys::LEFT];

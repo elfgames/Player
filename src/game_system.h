@@ -28,6 +28,10 @@
  * Game System namespace.
  */
 namespace Game_System {
+
+	// Numpad controls
+	extern bool UseNumpad;
+
 	enum sys_bgm {
 		BGM_Battle,
 		BGM_Victory,

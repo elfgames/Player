@@ -31,4 +31,7 @@ LOCAL_LDLIBS := -L$(EASYDEV_ANDROID)/libs/armeabi-v7a -lGLESv1_CM -llog -lz -lfr
 LOCAL_CFLAGS := -O2 -Wall -Wextra -fno-rtti -DUSE_SDL -DHAVE_SDL_MIXER -DLCF_SUPPORT_ICU
 LOCAL_CPPFLAGS	=	$(LOCAL_C_FLAGS) -fno-exceptions -std=c++0x
 
+LOCAL_CPPFLAGS += -fexceptions
+LOCAL_CPPFLAGS += -frtti
+
 include $(BUILD_SHARED_LIBRARY)

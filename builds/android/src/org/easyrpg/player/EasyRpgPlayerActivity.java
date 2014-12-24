@@ -53,8 +53,10 @@ import android.graphics.Paint.Style;
  */
 
 public class EasyRpgPlayerActivity extends SDLActivity {
-	private ImageView aView, bView, cView;
+	private ImageView aView, bView, cView, dView;
+	private ImageView[] numView;
 	private boolean uiVisible = true;
+	private boolean useNumpad = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {		
@@ -72,6 +74,7 @@ public class EasyRpgPlayerActivity extends SDLActivity {
 	    
 	    drawButtons();
 	    drawCross();
+	    drawNumbers();
 	}
 	
 	@Override
@@ -92,6 +95,30 @@ public class EasyRpgPlayerActivity extends SDLActivity {
 	    return true;
 	}
 	
+	private void toggleStandardUI(boolean value) {
+		if (value) {
+			mLayout.addView(aView);
+			mLayout.addView(bView);
+			mLayout.addView(dView);
+			mLayout.addView(cView);
+		} else {
+			mLayout.removeView(aView);
+			mLayout.removeView(bView);
+			mLayout.removeView(dView);
+			mLayout.removeView(cView);
+		}
+	}
+
+	private void toggleNumpadUI(boolean value) {
+		if (value) {
+			for (int i = 0; i < 9; i++)
+				mLayout.addView(numView[i]);
+		} else {
+			for (int i = 0; i < 9; i++)
+				mLayout.removeView(numView[i]);
+		}
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
@@ -101,13 +128,9 @@ public class EasyRpgPlayerActivity extends SDLActivity {
 	            return true;
 	        case R.id.toggle_ui:
 	        	if (uiVisible) {
-	        		mLayout.removeView(aView);
-	        		mLayout.removeView(bView);
-	        		mLayout.removeView(cView);
+	            toggleStandardUI(false);
 	        	} else {
-	        		mLayout.addView(aView);
-	        		mLayout.addView(bView);
-	        		mLayout.addView(cView);
+	            toggleStandardUI(true);
 	        	}
 	        	uiVisible = !uiVisible;
 	            return true;
@@ -207,6 +230,31 @@ public class EasyRpgPlayerActivity extends SDLActivity {
         return (int)screenWidthDp;
 	}
 	
+	public int setNumpad(boolean value) {
+		if (value == useNumpad)
+			return 0;
+		if (value)
+		{
+			useNumpad = true;
+			runOnUiThread(new Runnable() {
+				public void run() {
+					toggleStandardUI(false);
+					toggleNumpadUI(true);
+				}
+			});
+		} else {
+			useNumpad = false;
+			runOnUiThread(new Runnable() {
+				public void run() {
+					toggleStandardUI(true);
+					toggleNumpadUI(false);
+				}
+			});
+		}
+		return 0;
+	}
+
+
 	/**
 	 * Gets Painter used for ui drawing.
 	 * 
@@ -240,10 +288,60 @@ public class EasyRpgPlayerActivity extends SDLActivity {
 		aView.setImageBitmap(abBmp);
 		bView = new ImageView(this);
 		bView.setImageBitmap(abBmp);
+		dView = new ImageView(this);
+		dView.setImageBitmap(abBmp);
 		setLayoutPositionRight(aView, 0.13, 0.7);
 		setLayoutPositionRight(bView, 0.03, 0.6);
+		setLayoutPositionRight(dView, 0.03, 0.8);
 		mLayout.addView(aView);
 		mLayout.addView(bView);
+		mLayout.addView(dView);
+	}
+
+	/**
+	 * Draws numbers on screen
+	 */
+	private void drawNumbers() {
+		numView = new ImageView[9];
+	  Resources resources = getResources();
+	  float scale = resources.getDisplayMetrics().density;
+		// Setup color
+		Paint numberPaint = getPainter();
+
+		// Set size
+		int iconSize = getPixels(100); // ~2.5cm
+		int iconSize_33 = (int)(iconSize * 0.33);
+
+		for (int i = 0; i < 9; i++)
+		{
+			String gText = Integer.toString(i + 1);
+			Bitmap cBmp = Bitmap.createBitmap(iconSize + 10, iconSize + 10, Bitmap.Config.ARGB_8888);
+			Canvas c = new Canvas(cBmp);
+			Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+			// text color - #3D3D3D
+			paint.setColor(Color.rgb(0, 0, 0));
+			// text size in pixels
+			paint.setTextSize((int) (30 * scale));
+			// text shadow
+			paint.setShadowLayer(1f, 1f, 1f, Color.WHITE);
+
+			// draw text to the Canvas center
+			Rect bounds = new Rect();
+			paint.getTextBounds(gText, 0, gText.length(), bounds);
+			//int x = (cBmp.getWidth()) / 2;
+			int x = (cBmp.getWidth() + bounds.width()) / 2;
+			int y = (cBmp.getHeight() + bounds.height()) / 2;
+
+			c.drawText(gText, x, y, paint);
+
+			ImageView v = new ImageView(this);
+			v.setImageBitmap(cBmp);
+			int l_x = i % 3;
+			int l_y = i / 3;
+			setLayoutPosition(v, l_x * 0.3333, l_y * 0.3333);
+			//mLayout.addView(v);
+			numView[i] = v;
+		}
 	}
 	
 	/**

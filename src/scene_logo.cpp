@@ -931,6 +931,12 @@ void Scene_Logo::Update() {
 		frame_counter == 60 ||
 		Input::IsTriggered(Input::DECISION) ||
 		Input::IsTriggered(Input::CANCEL)) {
+
+		Graphics::SetFrameCount(0);
+		Player::SetupPlayerSpawn();
+		Scene::Push(EASYRPG_MAKE_SHARED<Scene_Map>());
+
+/*
 		Scene::Push(EASYRPG_MAKE_SHARED<Scene_Title>(), true);
 		if (Player::new_game_flag) {
 			Player::SetupPlayerSpawn();
@@ -944,5 +950,6 @@ void Scene_Logo::Update() {
 			Player::LoadSavegame(save_name);
 			Scene::Push(EASYRPG_MAKE_SHARED<Scene_Map>(true));
 		}
+*/
 	}
 }

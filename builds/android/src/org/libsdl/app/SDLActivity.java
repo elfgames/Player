@@ -54,6 +54,11 @@ public class SDLActivity extends Activity {
         System.loadLibrary("main");
     }
 
+    /**
+     * This method is called by SDL using JNI.
+     */
+    public static void pollInputDevices() {}
+
     // Setup
     @Override
     protected void onCreate(Bundle savedInstanceState) {

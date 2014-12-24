@@ -35,6 +35,7 @@
 #include "spriteset_map.h"
 #include "sprite_character.h"
 #include "scene_map.h"
+#include "scene_load.h"
 #include "scene.h"
 #include "graphics.h"
 #include "input.h"
@@ -42,6 +43,9 @@
 #include "output.h"
 #include "player.h"
 #include "util_macro.h"
+
+#include "filefinder.h"
+
 
 // Forward declarations.
 
@@ -570,11 +574,63 @@ bool Game_Interpreter::CommandControlSwitches(RPG::EventCommand const& com) { //
 	return true;
 }
 
+bool Game_Interpreter::CheckContinue() {
+	EASYRPG_SHARED_PTR<FileFinder::ProjectTree> tree;
+	tree = FileFinder::CreateProjectTree(Main_Data::project_path, false);
+
+	for (int i = 1; i <= 15; i++)
+	{
+		std::stringstream ss;
+		ss << "Save" << (i <= 9 ? "0" : "") << i << ".lsd";
+
+		if (!FileFinder::FindDefault(*tree, ss.str()).empty()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void Game_Interpreter::CommandLoadGame() {
+	if (true) {
+		Game_System::SePlay(Main_Data::game_data.system.decision_se);
+	} else {
+		Game_System::SePlay(Main_Data::game_data.system.buzzer_se);
+		return;
+	}
+
+	// Change scene
+	Scene::Push(EASYRPG_MAKE_SHARED<Scene_Load>());
+}
+
+
+void Game_Interpreter::CommandShutdown() {
+	Game_System::SePlay(Main_Data::game_data.system.decision_se);
+	Audio().BGS_Fade(800);
+	Graphics::Transition(Graphics::TransitionFadeOut, 32, true);
+	Scene::Pop();
+	Scene::Pop();
+}
+
 // Command control vars
 bool Game_Interpreter::CommandControlVariables(RPG::EventCommand const& com) { // Code ControlVars
 	int i, value = 0;
 	Game_Actor* actor;
 	Game_Character* character;
+
+	// PATCH
+	if (com.parameters[0] == 0 && com.parameters[1] == 3350)
+	{
+		value = com.parameters[5];
+		if (value == 1)
+			CommandLoadGame();
+		else if (value == 2)
+			CommandShutdown();
+		else if (value == 3)
+			Game_System::UseNumpad = true;
+		else if (value == 4)
+			Game_System::UseNumpad = false;
+		return true;
+	}
 
 	switch (com.parameters[4]) {
 		case 0:

@@ -318,7 +318,9 @@ void Game_Map::ScrollLeft(int distance) {
 }
 
 void Game_Map::ScrollRight(int distance) {
-	map_info.position_x = min(map_info.position_x + distance, (GetWidth() - 20) * SCREEN_TILE_WIDTH);
+	Output::Debug("Scroll %d of %d", map_info.position_x + distance, (GetWidth() - 20) * SCREEN_TILE_WIDTH);
+	//map_info.position_x = min(map_info.position_x + distance, (GetWidth() - 20) * SCREEN_TILE_WIDTH);
+	map_info.position_x = map_info.position_x + distance;
 }
 
 void Game_Map::ScrollUp(int distance) {

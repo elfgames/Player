@@ -285,14 +285,14 @@ public:
 	 *
 	 * @return flash intensity
 	 */
-	virtual double GetFlashLevel() const = 0;
+	virtual int GetFlashLevel() const = 0;
 
 	/**
 	 * Sets intensity of flash effect.
 	 *
 	 * @param flash_level new flash intensity
 	 */
-	virtual void SetFlashLevel(double flash_level) = 0;
+	virtual void SetFlashLevel(int flash_level) = 0;
 
 	/**
 	 * Returns how many flash effect time is left.
@@ -348,13 +348,6 @@ public:
 	 * @return whether the character can jump to.
 	 */
 	virtual bool IsLandable(int x, int y) const;
-
- 	/**
-	 * Gets if a message is halting this character's processes.
-	 *
-	 * @return whether the character is halted by a message.
-	 */
-	virtual bool IsMessageBlocking() const;
 
 	/**
 	 * Moves the character to a new tile.
@@ -669,8 +662,8 @@ public:
 	 */
 	void SetAnimationId(int animation_id);
 
-	int DistanceXfromPlayer() const;
-	int DistanceYfromPlayer() const;
+	int GetDistanceXfromPlayer() const;
+	int GetDistanceYfromPlayer() const;
 
 	virtual bool IsInPosition(int x, int y) const;
 
@@ -736,12 +729,7 @@ public:
 	 */
 	bool IsSpinning();
 
-	/**
-	 * Gets the bush depth of the tile where this character is standing
-	 *
-	 * @return Bush depth at this character's position
-	 */
-	int GetBushDepth();
+	virtual void UpdateBushDepth();
 
 	void SetGraphic(const std::string& name, int index);
 
@@ -760,7 +748,6 @@ protected:
 	void UpdateJump();
 	void UpdateSelfMovement();
 	void UpdateStop();
-
 	int tile_id;
 	int real_x;
 	int real_y;

@@ -24,6 +24,8 @@
 
 static RPG::SaveSystem& data = Main_Data::game_data.system;
 
+bool Game_System::UseNumpad = false;
+
 void Game_System::Init() {
 	data.Setup();
 }
