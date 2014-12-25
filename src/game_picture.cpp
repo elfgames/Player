@@ -18,6 +18,7 @@
 // Headers
 #include "bitmap.h"
 #include "options.h"
+#include "output.h"
 #include "cache.h"
 #include "main_data.h"
 #include "sprite.h"
@@ -70,6 +71,9 @@ void Game_Picture::UpdateSprite() {
 }
 
 void Game_Picture::Show(const std::string& _name, bool _transparency) {
+	Output::Debug("PICTURE ID %d, %s", data.ID, _name.c_str());
+	if (_name == "")
+		return;
 	data.name = _name;
 	data.transparency = _transparency;
 	data.time_left = 0;
@@ -86,6 +90,7 @@ void Game_Picture::Show(const std::string& _name, bool _transparency) {
 }
 
 void Game_Picture::Erase() {
+	Output::Debug("ERASED PICTURE ID %d, %s", data.ID, data.name.c_str());
 	data.name.clear();
 	sprite.reset();
 }

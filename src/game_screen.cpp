@@ -87,12 +87,10 @@ void Game_Screen::Reset()
 }
 
 Game_Picture* Game_Screen::GetPicture(int id) {
-	Output::Debug("PICTURE ID %d, %d", id, (int)pictures.size());
 	if (id <= 0) {
 		return NULL;
 	}
 	if (id > (int)pictures.size()) {
-		int old_size = (int)pictures.size();
 		// Some games use more pictures then RPG_RT officially supported
 		Main_Data::game_data.pictures.resize(id);
 		pictures.resize(id);

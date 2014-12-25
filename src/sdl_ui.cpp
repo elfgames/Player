@@ -926,11 +926,11 @@ void SdlUi::ProcessFingerEvent(SDL_Event& evnt, bool finger_down) {
 	float b_x = b_x2 - button_size / screen_width;
 	float b_y2 = b_y + button_size / screen_height;
 
-	// Bounding box of button b
+	// Bounding box of button c
 	float d_x2 = 1 - 0.03;
 	float d_y = 0.8;
-	float d_x = b_x2 - button_size / screen_width;
-	float d_y2 = b_y + button_size / screen_height;
+	float d_x = d_x2 - button_size / screen_width;
+	float d_y2 = d_y + button_size / screen_height;
 
 	// Bunding box of the cross
 	// One direction has 1/3 of box size
@@ -952,7 +952,7 @@ void SdlUi::ProcessFingerEvent(SDL_Event& evnt, bool finger_down) {
 	if (finger_down) {
 		keys[Input::Keys::RETURN] = a_hit;
 		keys[Input::Keys::ESCAPE] = b_hit;
-		keys[Input::Keys::SHIFT] = d_hit;
+		keys[Input::Keys::LSHIFT] = d_hit;
 		keys[Input::Keys::UP] = up_hit;
 		keys[Input::Keys::DOWN] = down_hit;
 		keys[Input::Keys::LEFT] = left_hit;
@@ -960,7 +960,7 @@ void SdlUi::ProcessFingerEvent(SDL_Event& evnt, bool finger_down) {
 	} else {
 		keys[Input::Keys::RETURN] = !a_hit & keys[Input::Keys::RETURN];
 		keys[Input::Keys::ESCAPE] = !b_hit & keys[Input::Keys::ESCAPE];
-		keys[Input::Keys::SHIFT] = !d_hit & keys[Input::Keys::SHIFT];
+		keys[Input::Keys::LSHIFT] = !d_hit & keys[Input::Keys::LSHIFT];
 		keys[Input::Keys::UP] = !up_hit & keys[Input::Keys::UP];
 		keys[Input::Keys::DOWN] = !down_hit & keys[Input::Keys::DOWN];
 		keys[Input::Keys::LEFT] = !left_hit & keys[Input::Keys::LEFT];
