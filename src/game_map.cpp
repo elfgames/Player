@@ -315,6 +315,7 @@ void Game_Map::ReserveInterpreterDeletion(EASYRPG_SHARED_PTR<Game_Interpreter> i
 void Game_Map::ScrollDown(int distance) {
 	int dist = map_info.position_y + distance;
 	map_info.position_y = dist;
+	Output::Debug("Scroll down value %d, distance %d", map_info.position_y, distance);
 
 	if (!GetLoopVertical()) {
 		map_info.position_y = min(dist, (GetHeight() - 15) * SCREEN_TILE_WIDTH);
@@ -324,6 +325,7 @@ void Game_Map::ScrollDown(int distance) {
 void Game_Map::ScrollLeft(int distance) {
 	int dist = map_info.position_x - distance;
 	map_info.position_x = dist;
+	Output::Debug("Scroll left value %d, distance %d", map_info.position_x, distance);
 
 	if (!GetLoopHorizontal()) {
 		map_info.position_x = max(dist, 0);
@@ -333,6 +335,7 @@ void Game_Map::ScrollLeft(int distance) {
 void Game_Map::ScrollRight(int distance) {
 	int dist = map_info.position_x + distance;
 	map_info.position_x = dist;
+	Output::Debug("Scroll right value %d, distance %d", map_info.position_x, distance);
 
 	if (!GetLoopHorizontal()) {
 		map_info.position_x = min(dist, (GetWidth() - 20) * SCREEN_TILE_WIDTH);
@@ -342,6 +345,7 @@ void Game_Map::ScrollRight(int distance) {
 void Game_Map::ScrollUp(int distance) {
 	int dist = map_info.position_y - distance;
 	map_info.position_y = dist;
+	Output::Debug("Scroll Up value %d, distance %d", map_info.position_y, distance);
 
 	if (!GetLoopVertical()) {
 		map_info.position_y = min(dist, 0);
@@ -851,6 +855,7 @@ int Game_Map::GetDisplayX() {
 	return map_info.position_x;
 }
 void Game_Map::SetDisplayX(int new_display_x) {
+	Output::Debug("Resetting display x %d", new_display_x);
 	map_info.position_x = new_display_x;
 }
 
@@ -1064,6 +1069,7 @@ void Game_Map::UpdateParallax() {
 
 int Game_Map::GetParallaxX() {
 	int px = parallax_x - map_info.position_x * (SCREEN_TILE_WIDTH / 64);
+	//Output::Debug("Parallax x %d, %d, %d", (px < 0) ? -(-px / 64) : (px / 64), parallax_x, map_info.position_x);
 	return (px < 0) ? -(-px / 64) : (px / 64);
 }
 
@@ -1081,7 +1087,7 @@ int Game_Map::WrapX(int x) {
 		x += Game_Map::GetWidth();
 	}
 	else if (x >= Game_Map::GetWidth()) {
-		x = 0;
+		x %= Game_Map::GetWidth();
 	}
 	return x;
 }
@@ -1091,7 +1097,17 @@ int Game_Map::WrapY(int y) {
 		y += Game_Map::GetHeight();
 	}
 	else if (y >= Game_Map::GetHeight()) {
-		y = 0;
+		y %= Game_Map::GetHeight();
 	}
 	return y;
+}
+
+int Game_Map::GetRealDisplayX() {
+	int center_x = (DisplayUi->GetWidth() / (TILE_SIZE / 16) - TILE_SIZE * 2) * 8;
+	return (GetDisplayX() + center_x) % (GetWidth() * SCREEN_TILE_WIDTH) - center_x;
+}
+
+int Game_Map::GetRealDisplayY() {
+	int center_y = (DisplayUi->GetHeight() / (TILE_SIZE / 16) - TILE_SIZE) * 8;
+	return (GetDisplayY() + center_y) % (GetHeight() * SCREEN_TILE_WIDTH) - center_y;
 }

@@ -149,14 +149,33 @@ void Game_Character::MoveTo(int x, int y) {
 }
 
 int Game_Character::GetScreenX() const {
-	int x = ((real_x - Game_Map::GetDisplayX() + 3) / (SCREEN_TILE_WIDTH / TILE_SIZE) + (TILE_SIZE/2));
-	printf("%d\n", x);
+	int x = real_x - Game_Map::GetRealDisplayX();
+	int max_width = Game_Map::GetWidth() * SCREEN_TILE_WIDTH;
 
-	return x;
+	if (x - max_width > 0) {
+		x -= max_width;
+	}
+	else if (x < 0) {
+		x += max_width;
+	}
+
+	x = x / (SCREEN_TILE_WIDTH / TILE_SIZE) + (TILE_SIZE/2);
+ 		 
+ 	return x;
 }
 
 int Game_Character::GetScreenY() const {
-	int y = (real_y - Game_Map::GetDisplayY() + 3) / (SCREEN_TILE_WIDTH / TILE_SIZE) + TILE_SIZE;
+	int y = real_y - Game_Map::GetRealDisplayY();
+	int max_height = Game_Map::GetHeight() * SCREEN_TILE_WIDTH;
+
+	if (y - max_height > 0) {
+		y -= max_height;
+	}
+	else if (y < 0) {
+		y += max_height;
+	}
+
+	y = y / (SCREEN_TILE_WIDTH / TILE_SIZE) + TILE_SIZE;
 
 	int n;
 	if (move_count >= jump_peak)
@@ -176,7 +195,7 @@ int Game_Character::GetScreenZ(int /* height */) const {
 
 	if (GetLayer() == RPG::EventPage::Layers_below) return 0;
 	
-	int z = (real_y - Game_Map::GetDisplayY() + 3) / TILE_SIZE + (SCREEN_TILE_WIDTH / TILE_SIZE);
+	int z = (real_y - Game_Map::GetRealDisplayY() + 3) / TILE_SIZE + (SCREEN_TILE_WIDTH / TILE_SIZE);
 
 	return z;
 }

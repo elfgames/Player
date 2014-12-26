@@ -370,6 +370,9 @@ namespace Game_Map {
 	 */
 	void SetDisplayY(int display_y);
 
+	int GetRealDisplayX();
+	int GetRealDisplayY();
+
 	/**
 	 * Gets need refresh flag.
 	 *

@@ -445,6 +445,7 @@ void Player::LoadDatabase() {
 }
 
 void Player::LoadSavegame(const std::string& save_name) {
+		Output::Debug("Start loading");
 	std::auto_ptr<RPG::Save> save = LSD_Reader::Load(save_name, encoding);
 
 	if (!save.get()) {
@@ -469,6 +470,7 @@ void Player::LoadSavegame(const std::string& save_name) {
 	RPG::Music current_music = Main_Data::game_data.system.current_music;
 	Game_System::BgmStop();
 	Game_System::BgmPlay(current_music);
+	Output::Debug("End loading");
 }
 
 void Player::SetupPlayerSpawn() {
